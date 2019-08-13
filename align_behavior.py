@@ -1,4 +1,5 @@
 import csv
+from numpy import *
 from operantanalysis import *
 from operator import itemgetter
 from tkinter import filedialog, Tk
@@ -20,7 +21,7 @@ def parse_csv():
     for index1, row in enumerate(parsed_csv):
         for index2, item in enumerate(row):
             try:
-                parsed_csv[index1][index2] = (float(item))
+                parsed_csv[index1][index2] = round((float(item)), 2)
             except ValueError:
                 pass
     csv_list = sorted(parsed_csv[1:], key=itemgetter(0))
@@ -37,21 +38,40 @@ def load_operant_file():
     file = load_file(
         r'\\dartfs-hpc\rc\lab\N\NautiyalK\Abraham Vazquez\Imaging\Mouse728_DS_TroughTrain2_2019_For_Imaging\Day 14\!2019-08-02_10h43m.Subject 0')
     file_info = extract_info_from_file(file, 500)
-    # for i in range(len(file_info[0])):
-    #   print('{:<8} {:>10}'.format(file_info[0][i], file_info[1][i]))
     return file_info
 
 
 def align_lists():
-    behavior_file = load_operant_file()
-    event_detection_file = parse_csv()
-    cells_aligned_behavior = [behavior_file, event_detection_file]
-    print(len(event_detection_file))
-    # for i in range(len(cells_aligned_behavior[1])):
-    #   print('{:<8} {:>10} {:>10} {:>10} {:>10}'.format(cells_aligned_behavior[]))
+    behavior_file = array(load_operant_file())
+    event_detection_file = array(parse_csv())
+    time_codes = list(behavior_file[0])
+    behaviors = list(behavior_file[1])
+    cell_time = list(event_detection_file[1:, 0])
+    cell_number = list(event_detection_file[1:, 1])
+    cell_value = list(event_detection_file[1:, 2])
+    cell_header = list(event_detection_file[0])
+    behavior_header = ['Behavior Time Code (s)', 'Behavioral Event']
+    header = cell_header + behavior_header
+    print(time_codes)
+    print(behaviors)
+    print(cell_time)
+    print(cell_number)
+    print(cell_value)
+    print(header)
+    aligned_list = [header, cell_time, cell_number, cell_value, time_codes, behaviors]
+    print(aligned_list)
 
-    data_dict = {'Headers': [event_detection_file[0], 'Behavioral Time Code', 'Behavioral Event'], 'Cell Events':
-                 event_detection_file, 'Behavior': behavior_file}
+    data_dict = {'Headers': [event_detection_file[0], 'Behavioral Time Code (s)', 'Behavioral Event'],
+                 'Cell_Number': event_detection_file[1:, 1], 'Cell_Time': event_detection_file[1:, 0],
+                 'Cell_Value': event_detection_file[1:, 2],
+                 'Behavior': behavior_file[1], 'Time_Code': behavior_file[0]}
+
+    # with open('aligned_cell_behavior.csv', mode='w') as csvFile:
+    #   fieldnames = ['Headers', 'Cell_Number', 'Cell_Time', 'Cell_Value', 'Behavior', 'Time_Code']
+    #  writer = csv.DictWriter(csvFile, fieldnames=fieldnames)
+    # writer.writeheader()
+    # for data in data_dict:
+    #   writer.writerow(data)
 
 
 align_lists()
