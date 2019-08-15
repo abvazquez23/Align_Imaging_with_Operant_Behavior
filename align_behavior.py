@@ -59,11 +59,19 @@ def align_lists():
     # for t, u, w, x, y,  z in zip_longest(cell_and_behavior_time, time_codes, behaviors, cell_time, cell_number, cell_value):
     #   print(t, u, w, x, y, z)
     print(cell_and_behavior_time)
-    print(event_detection_file)
-    for i in cell_and_behavior_time:
-        for x in event_detection_file[1:, 0]:
-            if x.any() == i:
-                cell_and_behavior_time.append(event_detection_file[1:, 1:2])
+    for i in event_detection_file[1:]:
+        for x in cell_and_behavior_time:
+            try:
+                if i[0] == x:
+                    print(i[1:3], x)
+                    try:
+                        cell_and_behavior_time.insert(x, i[1:3])
+                    except TypeError:
+                        pass
+
+            except ValueError:
+                pass
+
     print(cell_and_behavior_time)
     data_dict = {'Headers': [event_detection_file[0], 'Behavioral Time Code (s)', 'Behavioral Event'],
                  'Cell_Number': event_detection_file[1:, 1], 'Cell_Time': event_detection_file[1:, 0],
