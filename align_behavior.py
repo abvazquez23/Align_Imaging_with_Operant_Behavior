@@ -1,9 +1,9 @@
 import csv
+import pandas as pd
 from numpy import *
 from operantanalysis import *
 from operator import itemgetter
 from tkinter import filedialog, Tk
-from itertools import zip_longest
 
 
 def choose_file():
@@ -43,6 +43,10 @@ def load_operant_file():
 def align_lists():
     behavior_file = array(load_operant_file())
     event_detection_file = array(parse_csv())
+    behavior_dset = pd.DataFrame(data=behavior_file).T
+    cell_dset = pd.DataFrame(data=event_detection_file[1:])
+    transposed_array = array(behavior_dset)
+    cell_dset_array = array(cell_dset)
     time_codes = list(behavior_file[0])
     behaviors = list(behavior_file[1])
     cell_time = list(event_detection_file[1:, 0])
@@ -51,28 +55,29 @@ def align_lists():
     cell_header = list(event_detection_file[0])
     behavior_header = ['Behavior Time Code (s)', 'Behavioral Event']
     header = behavior_header + cell_header
-    aligned_list = [header, time_codes, behaviors, cell_time, cell_number, cell_value]
-    print(aligned_list)
-
     cell_and_behavior_time = sorted((time_codes + cell_time), key=float)
-    # print(header)
-    # for t, u, w, x, y,  z in zip_longest(cell_and_behavior_time, time_codes, behaviors, cell_time, cell_number, cell_value):
-    #   print(t, u, w, x, y, z)
-    print(cell_and_behavior_time)
-    for i in event_detection_file[1:]:
-        for x in cell_and_behavior_time:
+    aligned_list = [header, cell_and_behavior_time, time_codes, behaviors, cell_time, cell_number, cell_value]
+    print(behavior_dset)
+    print(cell_dset)
+    print(cell_dset[0])
+    print(behavior_dset[0])
+    print(cell_dset[1:])
+    for index, row in cell_dset.iterrows():
+        for index1, row2 in behavior_dset.iterrows():
             try:
-                if i[0] == x:
-                    print(i[1:3], x)
-                    try:
-                        cell_and_behavior_time.insert(x, i[1:3])
-                    except TypeError:
-                        pass
-
+                if row[0] == row2[0]:
+                    print(row[0], row2[0])
+                    print(index, index1)
+                    behavior_dset.insert(2, 'Cells', row)
             except ValueError:
                 pass
 
-    print(cell_and_behavior_time)
+    print(behavior_dset)
+
+    # print(header)
+    # for t, u, w, x, y,  z in zip_longest(cell_and_behavior_time, time_codes, behaviors, cell_time, cell_number, cell_value):
+    #   print(t, u, w, x, y, z)
+
     data_dict = {'Headers': [event_detection_file[0], 'Behavioral Time Code (s)', 'Behavioral Event'],
                  'Cell_Number': event_detection_file[1:, 1], 'Cell_Time': event_detection_file[1:, 0],
                  'Cell_Value': event_detection_file[1:, 2],

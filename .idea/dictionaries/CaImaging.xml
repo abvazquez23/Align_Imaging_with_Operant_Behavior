@@ -2,6 +2,7 @@
   <dictionary name="CaImaging">
     <words>
       <w>dartfs</w>
+      <w>dset</w>
       <w>eventcode</w>
       <w>eventtypes</w>
       <w>filelines</w>
