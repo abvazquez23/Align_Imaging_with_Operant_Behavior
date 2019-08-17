@@ -3,6 +3,7 @@ from numpy import *
 from operantanalysis import *
 from operator import itemgetter
 from tkinter import filedialog, Tk
+from itertools import zip_longest
 
 
 def choose_file():
@@ -25,8 +26,6 @@ def parse_csv():
             except ValueError:
                 pass
     csv_list = sorted(parsed_csv[1:], key=itemgetter(0))
-    # for rows in csv_list:
-    #   print(rows)
     csv_list.insert(0, header)
     with open('Ordered_EDs.csv', 'w', newline='') as csvFile:
         writer = csv.writer(csvFile, delimiter=',')
@@ -36,7 +35,7 @@ def parse_csv():
 
 def load_operant_file():
     file = load_file(
-        '!2019-08-02_10h43m.Subject 0')
+        r'\\dartfs-hpc\rc\lab\N\NautiyalK\Abraham Vazquez\Imaging\Mouse728_DS_TroughTrain2_2019_For_Imaging\Day 14\!2019-08-02_10h43m.Subject 0')
     file_info = extract_info_from_file(file, 500)
     return file_info
 
@@ -51,16 +50,29 @@ def align_lists():
     cell_value = list(event_detection_file[1:, 2])
     cell_header = list(event_detection_file[0])
     behavior_header = ['Behavior Time Code (s)', 'Behavioral Event']
-    header = cell_header + behavior_header
-    aligned_list = [header, cell_time, cell_number, cell_value, time_codes, behaviors]
+    header = behavior_header + cell_header
+    aligned_list = [header, time_codes, behaviors, cell_time, cell_number, cell_value]
     print(aligned_list)
-    time = sorted(cell_time + time_codes, key=float)
 
-    print(event_detection_file[1:, 1:])
-    for i in cell_time:
-        for x  in time:
-            if i == x:
+    cell_and_behavior_time = sorted((time_codes + cell_time), key=float)
+    # print(header)
+    # for t, u, w, x, y,  z in zip_longest(cell_and_behavior_time, time_codes, behaviors, cell_time, cell_number, cell_value):
+    #   print(t, u, w, x, y, z)
+    print(cell_and_behavior_time)
+    for i in event_detection_file[1:]:
+        for x in cell_and_behavior_time:
+            try:
+                if i[0] == x:
+                    print(i[1:3], x)
+                    try:
+                        cell_and_behavior_time.insert(x, i[1:3])
+                    except TypeError:
+                        pass
 
+            except ValueError:
+                pass
+
+    print(cell_and_behavior_time)
     data_dict = {'Headers': [event_detection_file[0], 'Behavioral Time Code (s)', 'Behavioral Event'],
                  'Cell_Number': event_detection_file[1:, 1], 'Cell_Time': event_detection_file[1:, 0],
                  'Cell_Value': event_detection_file[1:, 2],
