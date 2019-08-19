@@ -43,13 +43,9 @@ def load_operant_file():
 def align_lists():
     behavior_file = array(load_operant_file())
     event_detection_file = array(parse_csv())
-    behavior_dset = pd.DataFrame(data=behavior_file).T
-    cell_dset = pd.DataFrame(data=event_detection_file[1:])
-    transposed_array = array(behavior_dset)
-    cell_dset_array = array(cell_dset)
-    time_codes = list(behavior_file[0])
+    time_codes = list(map(float, behavior_file[0]))
     behaviors = list(behavior_file[1])
-    cell_time = list(event_detection_file[1:, 0])
+    cell_time = list(map(float, event_detection_file[1:, 0]))
     cell_number = list(event_detection_file[1:, 1])
     cell_value = list(event_detection_file[1:, 2])
     cell_header = list(event_detection_file[0])
@@ -57,26 +53,25 @@ def align_lists():
     header = behavior_header + cell_header
     cell_and_behavior_time = sorted((time_codes + cell_time), key=float)
     aligned_list = [header, cell_and_behavior_time, time_codes, behaviors, cell_time, cell_number, cell_value]
-    print(behavior_dset)
-    print(cell_dset)
-    print(cell_dset[0])
-    print(behavior_dset[0])
-    print(cell_dset[1:])
-    for index, row in cell_dset.iterrows():
-        for index1, row2 in behavior_dset.iterrows():
-            try:
-                if row[0] == row2[0]:
-                    print(row[0], row2[0])
-                    print(index, index1)
-                    behavior_dset.insert(2, 'Cells', row)
-            except ValueError:
-                pass
+    df = pd.DataFrame(list(zip(cell_time, cell_number, cell_value)), columns=['Time (s)', 'Cell Name', 'Cell Value'])
+    print(df)
+    df2 = pd.DataFrame(list(zip(behavior_file[0], behavior_file[1])), columns=['Time Codes', 'Behavior'])
+    print(df2)
 
-    print(behavior_dset)
+    for i in df:
+        for x in df2:
+            print(df[i], df2[x])
+            if df[i] == df2[x]:
+                print(i, x)
+                print(df.iloc[0:][i], df2.iloc[0:][x])
+                df.insert(3, 'Time Codes', df2['Time Codes'], allow_duplicates=True)
+                df.insert(4, 'Behaviors', df2['Behavior'], allow_duplicates=True)
 
-    # print(header)
-    # for t, u, w, x, y,  z in zip_longest(cell_and_behavior_time, time_codes, behaviors, cell_time, cell_number, cell_value):
-    #   print(t, u, w, x, y, z)
+    print(df)
+
+    # columns = list(df)
+    # for column in columns:
+    #    print(column)
 
     data_dict = {'Headers': [event_detection_file[0], 'Behavioral Time Code (s)', 'Behavioral Event'],
                  'Cell_Number': event_detection_file[1:, 1], 'Cell_Time': event_detection_file[1:, 0],
