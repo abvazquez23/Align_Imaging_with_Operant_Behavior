@@ -64,13 +64,6 @@ def align_lists():
     cell_series = pd.Series(df['Time (s)'])
     behavior_series = pd.Series(df2['Time Codes'])
     # print(cell_series.searchsorted(behavior_series))
-    aligned_series = df.align(df2)
-    print(aligned_series)
-    #for index, value in cell_series.items():
-     #   for index1, value1 in behavior_series.items():
-      #      print(index, value)
-       #     if cell_series[index] == behavior_series[index1]:
-        #        print(value, value1)
 
 
 align_lists()
