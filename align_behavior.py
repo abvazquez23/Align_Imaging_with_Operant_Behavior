@@ -5,6 +5,7 @@ from operantanalysis import *
 from operator import itemgetter
 from tkinter import filedialog, Tk
 
+
 def choose_file():
     project = Tk()
     project.filename = filedialog.askopenfilename(initialdir="/", title="Choose an IDPS CSV file",
@@ -55,14 +56,21 @@ def align_lists():
 
     df = pd.DataFrame(list(zip(cell_time, cell_number, cell_value)), columns=['Time (s)', 'Cell Name', 'Cell Value'])
     print(df)
-    df2 = pd.DataFrame(list(zip(behavior_file[0], behavior_file[1])), columns=['Time Codes', 'Behavior'])
+    df2 = pd.DataFrame(list(zip(time_codes, behaviors)), columns=['Time Codes', 'Behavior'])
     print(df2)
     df.insert(3, 'Time Codes', NaN)
     df.insert(4, 'Behavior', NaN)
     print(df)
-
-
-    print(df)
+    cell_series = pd.Series(df['Time (s)'])
+    behavior_series = pd.Series(df2['Time Codes'])
+    # print(cell_series.searchsorted(behavior_series))
+    aligned_series = df.align(df2)
+    print(aligned_series)
+    #for index, value in cell_series.items():
+     #   for index1, value1 in behavior_series.items():
+      #      print(index, value)
+       #     if cell_series[index] == behavior_series[index1]:
+        #        print(value, value1)
 
 
 align_lists()
