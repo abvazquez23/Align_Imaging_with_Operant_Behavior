@@ -5,7 +5,6 @@ from operantanalysis import *
 from operator import itemgetter
 from tkinter import filedialog, Tk
 
-
 def choose_file():
     project = Tk()
     project.filename = filedialog.askopenfilename(initialdir="/", title="Choose an IDPS CSV file",
@@ -53,37 +52,17 @@ def align_lists():
     header = behavior_header + cell_header
     cell_and_behavior_time = sorted((time_codes + cell_time), key=float)
     aligned_list = [header, cell_and_behavior_time, time_codes, behaviors, cell_time, cell_number, cell_value]
+
     df = pd.DataFrame(list(zip(cell_time, cell_number, cell_value)), columns=['Time (s)', 'Cell Name', 'Cell Value'])
     print(df)
     df2 = pd.DataFrame(list(zip(behavior_file[0], behavior_file[1])), columns=['Time Codes', 'Behavior'])
     print(df2)
-
-    for i in df:
-        for x in df2:
-            print(df[i], df2[x])
-            if df[i] == df2[x]:
-                print(i, x)
-                print(df.iloc[0:][i], df2.iloc[0:][x])
-                df.insert(3, 'Time Codes', df2['Time Codes'], allow_duplicates=True)
-                df.insert(4, 'Behaviors', df2['Behavior'], allow_duplicates=True)
-
+    df.insert(3, 'Time Codes', NaN)
+    df.insert(4, 'Behavior', NaN)
     print(df)
 
-    # columns = list(df)
-    # for column in columns:
-    #    print(column)
 
-    data_dict = {'Headers': [event_detection_file[0], 'Behavioral Time Code (s)', 'Behavioral Event'],
-                 'Cell_Number': event_detection_file[1:, 1], 'Cell_Time': event_detection_file[1:, 0],
-                 'Cell_Value': event_detection_file[1:, 2],
-                 'Behavior': behavior_file[1], 'Time_Code': behavior_file[0]}
-
-    # with open('aligned_cell_behavior.csv', mode='w') as csvFile:
-    #   fieldnames = ['Headers', 'Cell_Number', 'Cell_Time', 'Cell_Value', 'Behavior', 'Time_Code']
-    #  writer = csv.DictWriter(csvFile, fieldnames=fieldnames)
-    # writer.writeheader()
-    # for data in data_dict:
-    #   writer.writerow(data)
+    print(df)
 
 
 align_lists()
