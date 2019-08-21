@@ -62,6 +62,7 @@ def align_lists():
     for x in range(len(matched_array)):
         df.loc[matched_array[x], 'Time Codes'] = time_codes[x]
         df.loc[matched_array[x], 'Behavior'] = behaviors[x]
+    df['Behavior'].fillna(method='ffill', inplace=True)
     with pd.option_context('display.max_rows', 10000, 'display.max_columns', None):
         print(df)
     return df
@@ -72,7 +73,7 @@ def output_csv_file():
     project = Tk()
     project.directory = filedialog.askdirectory(initialdir="/", title="Choose an Output Directory")
     output_path = project.directory
-    print(output_path)
+    print('File Output:' + output_path)
     df.to_csv(output_path + '/aligned_cell_operant_behavior.csv')
 
 
