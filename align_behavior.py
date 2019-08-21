@@ -11,6 +11,7 @@ def choose_file():
     project.filename = filedialog.askopenfilename(initialdir="/", title="Choose an IDPS CSV file",
                                                   filetypes=[("CSV", "*.csv")])
     file = project.filename
+    print("IDPS File:" + file)
     return file
 
 
@@ -34,8 +35,12 @@ def parse_csv():
 
 
 def load_operant_file():
-    file = load_file(
-        r'\\dartfs-hpc\rc\lab\N\NautiyalK\Abraham Vazquez\Imaging\Mouse728_DS_TroughTrain2_2019_For_Imaging\Day 14\!2019-08-02_10h43m.Subject 0')
+    project = Tk()
+    project.filename = filedialog.askopenfilename(initialdir="/", title="Choose a Behavioral Operant File",
+                                                  filetypes=[("all files", "*.")])
+    operant_file = project.filename
+    print("Operant File:" + operant_file)
+    file = load_file(operant_file)
     file_info = extract_info_from_file(file, 500)
     return file_info
 
@@ -43,27 +48,32 @@ def load_operant_file():
 def align_lists():
     behavior_file = array(load_operant_file())
     event_detection_file = array(parse_csv())
+    a = 0.00
     time_codes = list(map(float, behavior_file[0]))
     behaviors = list(behavior_file[1])
-    cell_time = list(map(float, event_detection_file[1:, 0]))
-    cell_number = list(event_detection_file[1:, 1])
-    cell_value = list(event_detection_file[1:, 2])
-    cell_header = list(event_detection_file[0])
-    behavior_header = ['Behavior Time Code (s)', 'Behavioral Event']
-    header = behavior_header + cell_header
-    cell_and_behavior_time = sorted((time_codes + cell_time), key=float)
-    aligned_list = [header, cell_and_behavior_time, time_codes, behaviors, cell_time, cell_number, cell_value]
-
+    cell_time = [a] + list(map(float, event_detection_file[1:, 0]))
+    cell_number = [a] + list(event_detection_file[1:, 1])
+    cell_value = [a] + list(event_detection_file[1:, 2])
     df = pd.DataFrame(list(zip(cell_time, cell_number, cell_value)), columns=['Time (s)', 'Cell Name', 'Cell Value'])
-    print(df)
     df2 = pd.DataFrame(list(zip(time_codes, behaviors)), columns=['Time Codes', 'Behavior'])
-    print(df2)
     df.insert(3, 'Time Codes', NaN)
     df.insert(4, 'Behavior', NaN)
-    print(df)
-    cell_series = pd.Series(df['Time (s)'])
-    behavior_series = pd.Series(df2['Time Codes'])
-    # print(cell_series.searchsorted(behavior_series))
+    matched_array = df['Time (s)'].searchsorted(df2['Time Codes'])
+    for x in range(len(matched_array)):
+        df.loc[matched_array[x], 'Time Codes'] = time_codes[x]
+        df.loc[matched_array[x], 'Behavior'] = behaviors[x]
+    with pd.option_context('display.max_rows', 10000, 'display.max_columns', None):
+        print(df)
+    return df
 
 
-align_lists()
+def output_csv_file():
+    df = align_lists()
+    project = Tk()
+    project.directory = filedialog.askdirectory(initialdir="/", title="Choose an Output Directory")
+    output_path = project.directory
+    print(output_path)
+    df.to_csv(output_path + '/aligned_cell_operant_behavior.csv')
+
+
+output_csv_file()
