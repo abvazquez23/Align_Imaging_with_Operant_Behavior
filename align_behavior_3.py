@@ -4,7 +4,6 @@ from numpy import *
 from operantanalysis import *
 from operator import itemgetter
 from tkinter import filedialog, Tk
-from matplotlib import pyplot as plt
 
 
 def choose_file():
@@ -58,16 +57,26 @@ def align_lists():
     df = pd.DataFrame(list(zip(cell_time, cell_name, cell_value)), columns=['Time (s)', 'Cell Name', 'Cell Value'])
     df2 = pd.DataFrame(list(zip(time_codes, behaviors)), columns=['Time Codes', 'Behavior'])
     print(df2)
-    df.insert(3, 'Time Codes', NaN)
-    df.insert(4, 'Behavior', NaN)
-    matched_array = df['Time (s)'].searchsorted(df2['Time Codes'])
-    for x in range(len(matched_array)):
-        df.loc[matched_array[x], 'Time Codes'] = time_codes[x]
-        df.loc[matched_array[x], 'Behavior'] = behaviors[x]
-    df['Behavior'].fillna(method='ffill', inplace=True)
+
+    # matched_array = df['Time (s)'].searchsorted(df2['Time Codes'])
+    # for x in range(len(matched_array)):
+    #   df.loc[matched_array[x], 'Time Codes'] = time_codes[x]
+    #  df.loc[matched_array[x], 'Behavior'] = behaviors[x]
+    # df['Behavior'].fillna(method='ffill', inplace=True)
+    # df.drop_duplicates(['Time (s)'], keep='first', inplace=True)
+
     df_pivot = df.pivot(index='Time (s)', columns='Cell Name', values='Cell Value')
+    df_pivot.columns = df_pivot.columns.astype(str)
+    df_pivot.insert(df_pivot.shape[1], 'Behavior', NaN)
+    df_pivot.drop(columns=['0.0'], inplace=True)
+
+    # matched_array = df_pivot['Time (s)'].searchsorted(df2['Time Codes'])
+    # for x in range(len(matched_array)):
+    #     df_pivot.loc[matched_array[x], 'Behavior'] = behaviors[x]
+    # df_pivot.drop(columns=['0.0'])
     with pd.option_context('display.max_rows', 100, 'display.max_columns', 50):
         print(df_pivot)
+    print(list(df_pivot.columns.values))
 
     return df_pivot
 
@@ -82,4 +91,3 @@ def output_csv_file():
 
 
 output_csv_file()
-
