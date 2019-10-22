@@ -5,14 +5,20 @@
       <w>dset</w>
       <w>eventcode</w>
       <w>eventtypes</w>
+      <w>ffill</w>
       <w>filelines</w>
       <w>fileref</w>
+      <w>fillna</w>
       <w>idps</w>
+      <w>iterrows</w>
       <w>nautiyal</w>
+      <w>ncols</w>
       <w>nogo</w>
       <w>noqa</w>
+      <w>nrows</w>
       <w>operant</w>
       <w>reinforcers</w>
+      <w>searchsorted</w>
       <w>timecode</w>
     </words>
   </dictionary>
