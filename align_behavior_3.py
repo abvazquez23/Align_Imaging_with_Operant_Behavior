@@ -58,25 +58,26 @@ def align_lists():
     df2 = pd.DataFrame(list(zip(time_codes, behaviors)), columns=['Time Codes', 'Behavior'])
     print(df2)
 
-    # matched_array = df['Time (s)'].searchsorted(df2['Time Codes'])
-    # for x in range(len(matched_array)):
-    #   df.loc[matched_array[x], 'Time Codes'] = time_codes[x]
-    #  df.loc[matched_array[x], 'Behavior'] = behaviors[x]
-    # df['Behavior'].fillna(method='ffill', inplace=True)
-    # df.drop_duplicates(['Time (s)'], keep='first', inplace=True)
-
+    matched_array = df['Time (s)'].searchsorted(df2['Time Codes'])
+    for x in range(len(matched_array)):
+        df.loc[matched_array[x], 'Time Codes'] = time_codes[x]
+        df.loc[matched_array[x], 'Behavior'] = behaviors[x]
+        # df['Behavior'].fillna(method='ffill', inplace=True)
+        df.drop_duplicates(['Time (s)'], keep='first', inplace=True)
+    print(df)
+    print(list(matched_array))
     df_pivot = df.pivot(index='Time (s)', columns='Cell Name', values='Cell Value')
     df_pivot.columns = df_pivot.columns.astype(str)
-    df_pivot.insert(df_pivot.shape[1], 'Behavior', NaN)
     df_pivot.drop(columns=['0.0'], inplace=True)
+    df_pivot.insert(df_pivot.shape[1], 'Reward', NaN)
+    df_pivot.insert(df_pivot.shape[1], 'ITI', NaN)
+    df_pivot.insert(df_pivot.shape[1], 'Go', NaN)
+    df_pivot.insert(df_pivot.shape[1], 'Lever Press', NaN)
+    df_pivot.insert(df_pivot.shape[1], 'NoGo', NaN)
 
-    # matched_array = df_pivot['Time (s)'].searchsorted(df2['Time Codes'])
-    # for x in range(len(matched_array)):
-    #     df_pivot.loc[matched_array[x], 'Behavior'] = behaviors[x]
-    # df_pivot.drop(columns=['0.0'])
+
     with pd.option_context('display.max_rows', 100, 'display.max_columns', 50):
         print(df_pivot)
-    print(list(df_pivot.columns.values))
 
     return df_pivot
 
@@ -87,7 +88,7 @@ def output_csv_file():
     project.directory = filedialog.askdirectory(initialdir="/", title="Choose an Output Directory")
     output_path = project.directory
     print('File Output:' + output_path)
-    df.to_csv(output_path + '/aligned_cell_operant_behavior.csv')
+    df.to_csv(output_path + '/aligned_cell_operant_behavior_df.csv')
 
 
 output_csv_file()
