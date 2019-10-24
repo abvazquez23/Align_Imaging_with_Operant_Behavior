@@ -1,4 +1,3 @@
-import csv
 import pandas as pd
 from numpy import *
 from operantanalysis import *
