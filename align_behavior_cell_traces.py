@@ -15,20 +15,7 @@ def choose_file():
 
 def parse_csv():
     csv_file = open(choose_file())
-    #my_csv = csv.reader(csv_file)
-    #parsed_csv = list(my_csv)
-    #header = parsed_csv[0]
-   # for index1, row in enumerate(parsed_csv):
-     #   for index2, item in enumerate(row):
-      #      try:
-      #          parsed_csv[index1][index2] = round((float(item)), 2)
-       #     except ValueError:
-       #         pass
-   # csv_list = sorted(parsed_csv[1:], key=itemgetter(0))
-   # csv_list.insert(0, header)
-    #with open('Ordered_EDs.csv', 'w', newline='') as csvFile:
-     #   writer = csv.writer(csvFile, delimiter=',')
-      #  writer.writerows(csv_file)
+
     return csv_file
 
 
@@ -46,40 +33,43 @@ def load_operant_file():
 def align_lists():
     behavior_file = array(load_operant_file())
     event_detection_file = parse_csv()
-    #a = 0.00
     time_codes = list(map(float, behavior_file[0]))
     behaviors = list(behavior_file[1])
-    #cell_time = [a] + list(map(float, event_detection_file[1:, 0]))
-    #cell_name = [a] + list(event_detection_file[1:, 1])
-    #cell_value = [a] + list(event_detection_file[1:, 2])
-    df = pd.read_csv(event_detection_file)
+    df = pd.read_csv(event_detection_file, low_memory=False)
     df2 = pd.DataFrame(list(zip(time_codes, behaviors)), columns=['Time Codes', 'Behavior'])
     print(df2)
 
-    # matched_array = df['Time (s)'].searchsorted(df2['Time Codes'])
-    # for x in range(len(matched_array)):
-    #   df.loc[matched_array[x], 'Time Codes'] = time_codes[x]
-    #  df.loc[matched_array[x], 'Behavior'] = behaviors[x]
-    # df['Behavior'].fillna(method='ffill', inplace=True)
-    #df.drop_duplicates(['Time (s)'], keep='first', inplace=True)
-    print(df)
-
     df.columns = df.columns.astype(str)
-
     df.insert(df.shape[1], 'Reward', NaN)
     df.insert(df.shape[1], 'ITI', NaN)
     df.insert(df.shape[1], 'Go', NaN)
     df.insert(df.shape[1], 'Lever Press', NaN)
     df.insert(df.shape[1], 'NoGo', NaN)
-    #df_pivot.insert(0, 'Time (s)', df['Time (s)'].values)
+    print(list(df.columns.values))
+    cell_times = list(map(float, df[' '][1:]))
+    print(cell_times)
+    print(time_codes)
+    print(behaviors)
+    # print(df.iloc[:, [0, -5]])
+    # print(df[' '].index.values.tolist())
+    i = 1
+    # for index, row in df.iloc[1:, [0]].iterrows():
+    #   print(round(float(row.values), 2))
 
-    # i = 1
-    # for x in range(len(cell_time)):
-    #   if cell_time[x] == time_codes[x]:
-    #      if behaviors[x] == 'DipOff' and behaviors[x-i] == 'PokeOff1' and behaviors[x-i+1] == 'PokeOn1' and behaviors[x-i+2] == 'DipOn':
-    #         df_pivot.loc[['Time (s)'], ['Reward']] == 1
-    #       else:
-    #           i +=1
+    for index, value in enumerate(cell_times):
+        print(index, round(value, 2))
+        for index_2, value_2 in enumerate(time_codes):
+            if round(value, 2) == value_2:
+                print(True)
+                print(index_2, value_2)
+                if behaviors[index_2] == 'DipOff' and behaviors[index_2 - i] == 'PokeOff1' and behaviors[
+                    index_2 - i + 1] == 'PokeOn1' and \
+                        behaviors[index_2 - i + 2] == 'DipOn':
+                    print(True)
+                    df.iloc[index + 1, [-5]] = 1
+                else:
+                    i += 1
+                    df.iloc[index + 1, [-5]] = 0
 
     with pd.option_context('display.max_rows', 200, 'display.max_columns', 50):
         print(df)
