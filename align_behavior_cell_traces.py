@@ -62,14 +62,14 @@ def align_lists():
             if round(value, 2) == value_2:
                 print(True)
                 print(index_2, value_2)
-                if behaviors[index_2] == 'DipOff' and behaviors[index_2 - i] == 'PokeOff1' and behaviors[
-                    index_2 - i + 1] == 'PokeOn1' and \
-                        behaviors[index_2 - i + 2] == 'DipOn':
+                if behaviors[index_2] == 'DipOn' and behaviors[index_2 + i] == 'PokeOn1' and behaviors[
+                    index_2 + i + 1] == 'PokeOff1' and \
+                        behaviors[index_2 + i + 2] == 'DipOff':
                     print(True)
-                    df.iloc[index + 1, [-5]] = 1
+                    df.iloc[index + 1, [-5]] = int(1)
                 else:
-                    i += 1
-                    df.iloc[index + 1, [-5]] = 0
+                    i -= 1
+                    df.iloc[index + 1, [-5]] = int(0)
 
     with pd.option_context('display.max_rows', 200, 'display.max_columns', 50):
         print(df)
