@@ -17,19 +17,19 @@ def parse_csv():
     my_csv = csv.reader(csv_file)
     parsed_csv = list(my_csv)
     header = parsed_csv[0]
-    for index1, row in enumerate(parsed_csv):
-        for index2, item in enumerate(row):
-            try:
-                parsed_csv[index1][index2] = (float(item))
-            except ValueError:
-                pass
-    csv_list = sorted(parsed_csv[1:], key=itemgetter(0))
-    for rows in csv_list:
+    #for index1, row in enumerate(parsed_csv):
+     #   for index2, item in enumerate(row):
+      #      try:
+       #         parsed_csv[index1][index2] = (float(item))
+        #    except ValueError:
+         #       pass
+    # csv_list = sorted(parsed_csv[1:], key=itemgetter(0))
+    for rows in parsed_csv:
         print(rows)
-    csv_list.insert(0, header)
+    #csv_list.insert(0, header)
     with open('Ordered_EDs.csv', 'w', newline='') as csvFile:
         writer = csv.writer(csvFile)
-        writer.writerows(csv_list)
+        writer.writerows(my_csv)
 
 
 parse_csv()

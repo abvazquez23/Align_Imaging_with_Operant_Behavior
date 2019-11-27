@@ -58,14 +58,14 @@ def align_lists():
     df2 = pd.DataFrame(list(zip(time_codes, behaviors)), columns=['Time Codes', 'Behavior'])
     print(df2)
 
-    matched_array = df['Time (s)'].searchsorted(df2['Time Codes'])
-    for x in range(len(matched_array)):
-        df.loc[matched_array[x], 'Time Codes'] = time_codes[x]
-        df.loc[matched_array[x], 'Behavior'] = behaviors[x]
-        # df['Behavior'].fillna(method='ffill', inplace=True)
-        df.drop_duplicates(['Time (s)'], keep='first', inplace=True)
+    # matched_array = df['Time (s)'].searchsorted(df2['Time Codes'])
+    # for x in range(len(matched_array)):
+    #   df.loc[matched_array[x], 'Time Codes'] = time_codes[x]
+    #  df.loc[matched_array[x], 'Behavior'] = behaviors[x]
+    # df['Behavior'].fillna(method='ffill', inplace=True)
+    df.drop_duplicates(['Time (s)'], keep='first', inplace=True)
     print(df)
-    print(list(matched_array))
+
     df_pivot = df.pivot(index='Time (s)', columns='Cell Name', values='Cell Value')
     df_pivot.columns = df_pivot.columns.astype(str)
     df_pivot.drop(columns=['0.0'], inplace=True)
@@ -74,9 +74,17 @@ def align_lists():
     df_pivot.insert(df_pivot.shape[1], 'Go', NaN)
     df_pivot.insert(df_pivot.shape[1], 'Lever Press', NaN)
     df_pivot.insert(df_pivot.shape[1], 'NoGo', NaN)
+    df_pivot.insert(0, 'Time (s)', df['Time (s)'].values)
 
+    # i = 1
+    # for x in range(len(cell_time)):
+    #   if cell_time[x] == time_codes[x]:
+    #      if behaviors[x] == 'DipOff' and behaviors[x-i] == 'PokeOff1' and behaviors[x-i+1] == 'PokeOn1' and behaviors[x-i+2] == 'DipOn':
+    #         df_pivot.loc[['Time (s)'], ['Reward']] == 1
+    #       else:
+    #           i +=1
 
-    with pd.option_context('display.max_rows', 100, 'display.max_columns', 50):
+    with pd.option_context('display.max_rows', 200, 'display.max_columns', 50):
         print(df_pivot)
 
     return df_pivot
