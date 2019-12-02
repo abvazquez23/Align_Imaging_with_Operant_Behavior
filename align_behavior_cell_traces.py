@@ -146,6 +146,33 @@ def align_lists():
                             if behaviors[index_2 + x] == 'DipOff':
                                 break
 
+                    if behaviors[index_2] == 'PokeOn1' and behaviors[index_2 + 1] == 'DipOn':  # reward retrieval
+                        print(True)
+                        df.iloc[index + 1, [-8]] = 1
+                        x = 1
+                        n = []
+                        while True:
+                            df.iloc[index + x, [-8]] = 1
+                            x += 1
+                            print(x)
+                            t = round(float(df2.iat[index_2 + x, 0]), 1)
+                            print(t)
+                            try:
+                                print(cell_times.index(t))
+                                n.append(cell_times.index(t))
+                                print(n)
+                                print(list(range(n[0], n[-1] + 1)))
+                            except:
+                                ValueError
+                            try:
+                                for y in list(range(n[0], n[-1] + 1)):
+                                    df.iloc[y + 1, [-8]] = 1
+                                df.iloc[n[-1] + 1, [-8]] = 1
+                            except:
+                                ValueError
+                            if behaviors[index_2 + x] == 'DipOff':
+                                break
+
                     if behaviors[index_2] == 'SuccessfulNoGoTrial':  # Successful No Go  Trial
                         print(True)
                         df.iloc[index + 1, [-2]] = 1
@@ -182,6 +209,16 @@ def align_lists():
                             if behaviors[index_2 + 1] == 'PokeOff1' or behaviors[index_2 + 1] == 'EndSession':
                                 print('Done')
                                 break
+
+    for index, value in enumerate(cell_times):
+        for index_2, value_2 in enumerate(time_codes):
+            for i in range(len(cell_times)):
+                if cell_times[i] <= value_2 >= cell_times[i + 1]:
+                    if behaviors[index_2] == 'PokeOn1' and behaviors[index_2 + 1] == 'DipOn':  # reward retrieval
+                        print(True)
+                        df.iloc[index + 1, [-8]] = 1
+                        df.iloc[index + 2, [-8]] = 1
+                        df.iloc[index + 3, [-8]] = 1
 
     df.fillna(0, inplace=True)
 
