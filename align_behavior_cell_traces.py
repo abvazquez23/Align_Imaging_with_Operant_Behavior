@@ -61,21 +61,28 @@ def align_lists():
     for index, value in enumerate(cell_times):
         for index_2, value_2 in enumerate(time_codes):
             if round(value_2, 1) == value:
-                if time_codes[index_2] == time_codes[index_2 + 1]:
-                    x = 0
-                    print(True)
+                df.iloc[index + 1, [-11]] = behaviors[index_2]
+
+    for index, value in enumerate(cell_times):
+        for index_2, value_2 in enumerate(time_codes):
+            if round(value_2, 1) == value:
+                x = 1
+                if behaviors[index_2] == 'EndSession':
+                    break
+                if round(time_codes[index_2], 1) == round(time_codes[index_2 + x], 1):
                     n = []
+                    n.append(behaviors[index_2])
                     while True:
-                        x += 1
-                        n.append(behaviors[index_2])
                         n.append(behaviors[index_2 + x])
-                        print(time_codes[index_2])
-                        print(time_codes[index_2 + x])
-                        print(list(n))
-                        for i in n:
-                            df.iloc[index + 1, [-11]] = i
-                        if time_codes[index_2] != time_codes[index_2 + x] or behaviors[index_2 + x] == 'EndSession':
+                        separator = ','
+                        df.iloc[index + 1, [-11]] = separator.join(n)
+                        x += 1
+                        if behaviors[index_2] == 'HouseLightOff':
                             break
+                        if round(time_codes[index_2], 1) != round(time_codes[index_2 + x], 1):
+                            break
+                    if behaviors[index_2] == 'EndSession':
+                        break
 
     for index, value in enumerate(cell_times):
         for index_2, value_2 in enumerate(time_codes):
@@ -90,14 +97,14 @@ def align_lists():
                         t = round(float(df2.iat[index_2 + x, 0]), 1)
                         try:
                             n.append(cell_times.index(t))
-                        except:
-                            ValueError
+                        except ValueError:
+                            pass
                         try:
                             for y in list(range(n[0], n[-1] + 1)):
                                 df.iloc[y + 1, [-10]] = 1
                             df.iloc[n[-1] + 1, [-10]] = 1
-                        except:
-                            ValueError
+                        except ValueError:
+                            pass
                         if behaviors[index_2 + x] == 'DipOff':
                             break
 
@@ -110,14 +117,14 @@ def align_lists():
                             t = round(float(df2.iat[index_2 + x, 0]), 1)
                             try:
                                 n.append(cell_times.index(t))
-                            except:
-                                ValueError
+                            except ValueError:
+                                pass
                             try:
                                 for y in list(range(n[0], n[-1] + 1)):
                                     df.iloc[y + 1, [-8]] = 0
                                 df.iloc[n[-1] + 1, [-8]] = 1
-                            except:
-                                ValueError
+                            except ValueError:
+                                pass
                             if behaviors[index_2 + x] == 'PokeOn1':
                                 break
 
@@ -160,15 +167,15 @@ def align_lists():
                             for y in list(range(n[0] + 1, n[-1] + 1)):
                                 df.iloc[y, [-9]] = 1
                             df.iloc[n[-1] + 1, [-9]] = 1
-                        except:
-                            ValueError
+                        except ValueError:
+                            pass
                         if behaviors[index_2 + x] == 'PokeOff1' or behaviors[index_2 + x] == 'EndSession':
                             break
 
     for index, value in enumerate(cell_times):
         for index_2, value_2 in enumerate(time_codes):
             if round(value_2, 1) == value:
-                if behaviors[index_2] == 'LLeverOn':   # ITI
+                if behaviors[index_2] == 'LLeverOn':  # ITI
                     df.iloc[index + 1, [-7]] = 0
                     x = 0
                     n = [cell_times.index(round(float(df2.iat[index_2, 0]), 1))]
@@ -180,8 +187,8 @@ def align_lists():
                             for y in list(range(n[0] + 1, n[-1] + 1)):
                                 df.iloc[y + 1, [-7]] = 0
                             df.iloc[n[-1] + 1, [-7]] = 0
-                        except:
-                            ValueError
+                        except ValueError:
+                            pass
                         if behaviors[index_2 + x] == 'LLeverOff':
                             break
 
@@ -198,14 +205,14 @@ def align_lists():
                         t = round(float(df2.iat[index_2 + x, 0]), 1)
                         try:
                             n.append(cell_times.index(t))
-                        except:
-                            ValueError
+                        except ValueError:
+                            pass
                         try:
                             for y in list(range(n[0], n[-1] + 1)):
                                 df.iloc[y + 1, [-7]] = 0
                             df.iloc[n[-1] + 1, [-7]] = 0
-                        except:
-                            ValueError
+                        except ValueError:
+                            pass
                         if behaviors[index_2 + x] == 'DipOff':
                             break
 
