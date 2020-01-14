@@ -69,20 +69,35 @@ def align_lists():
                 x = 1
                 if behaviors[index_2] == 'EndSession':
                     break
+
                 if round(time_codes[index_2], 1) == round(time_codes[index_2 + x], 1):
-                    n = []
-                    n.append(behaviors[index_2])
+
+                    #df.iloc[index + 1, [-11]] = behaviors[index_2]
+                    n = [behaviors[index_2]]
                     while True:
+
+                        print(n)
                         n.append(behaviors[index_2 + x])
                         separator = ','
                         df.iloc[index + 1, [-11]] = separator.join(n)
+                        print(separator.join(n))
+                        print(x)
                         x += 1
-                        if behaviors[index_2] == 'HouseLightOff':
-                            break
+                        print(x)
                         if round(time_codes[index_2], 1) != round(time_codes[index_2 + x], 1):
                             break
-                    if behaviors[index_2] == 'EndSession':
-                        break
+
+                    #while True:
+                    #    n.append(behaviors[index_2 + x])
+
+                    #    x += 1
+
+                    #    if round(time_codes[index_2], 1) != round(time_codes[index_2 + x], 1):
+                    #        break
+                    #    if behaviors[index_2] == 'HouseLightOff':
+                    #        break
+                    #if behaviors[index_2] == 'EndSession':
+                    #    break
 
     for index, value in enumerate(cell_times):
         for index_2, value_2 in enumerate(time_codes):
