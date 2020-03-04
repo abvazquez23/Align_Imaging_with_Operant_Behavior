@@ -316,7 +316,7 @@ def output_csv_file():
     project.directory = filedialog.askdirectory(initialdir="/", title="Choose an Output Directory")
     output_path = project.directory
     print('File Output:' + output_path)
-    df.to_csv(output_path + '/aligned_cell_operant_behavior_df_2.csv')
+    df.to_csv(output_path + '/aligned_cell_operant_behavior_df.csv')
 
 
 output_csv_file()
